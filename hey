@@ -1,0 +1,66 @@
+using UnityEngine;
+using System.Collections;
+
+public class ElementalProjectile : MonoBehaviour {
+    public enum Element Type { Explosion, BlackHole, Fire, Ice }
+    public ElementType currentElement;
+
+    [Header("Settings")]
+    public float radius = 5f;
+    public float force = 500f;
+    public int damage = 20;
+
+    void OnTriggerEnter(Collider other) {
+        switch (currentElement) {
+            case ElementType.Explosion:
+                ApplyExplosion();
+                break;
+            case ElementType.BlackHole:
+                StartCoroutine(SingularityEffect());
+                break;
+            case ElementType.Fire:
+                ApplyBurn(other);
+                break;
+            case ElementType.Ice:
+                ApplyFreeze(other);
+                break;
+        }
+        if (currentElement != ElementType.BlackHole) Destroy(gameObject);
+    }
+
+    void ApplyExplosion() {
+        Collider[] objects = Physics.OverlapSphere(transform.position, radius);
+        foreach (Collider h in objects) {
+            Rigidbody rb = h.GetComponent<Rigidbody>();
+            if (rb) rb.AddExplosionForce(force, transform.position, radius);
+            // Add damage logic here
+        }
+    }
+
+    IEnumerator SingularityEffect() {
+        float duration = 3f;
+        while (duration > 0) {
+            Collider[] objects = Physics.OverlapSphere(transform.position, radius);
+            foreach (Collider h in objects) {
+                Rigidbody rb = h.GetComponent<Rigidbody>();
+                if (rb) {
+                    Vector3 dir = transform.position - h.transform.position;
+                    rb.AddForce(dir.normalized * force * Time.deltaTime);
+                }
+            }
+            duration -= Time.deltaTime;
+            yield return null;
+        }
+        Destroy(gameObject);
+    }
+
+    void ApplyBurn(Collider target) {
+        // Logic: Start a repeating Timer on the enemy script to subtract HP
+        Debug.Log("Target Ignited!");
+    }
+
+    void ApplyFreeze(Collider target) {
+        // Logic: Set target move speed to 0 and change material color to Blue
+        Debug.Log("Target Frozen!");
+    }
+}
