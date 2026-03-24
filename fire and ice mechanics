@@ -1,0 +1,13 @@
+void ApplyFreeze(Collider target) {
+    EnemyHealth enemy = target.GetComponent<EnemyHealth>();
+    if (enemy != null) {
+        enemy.Freeze(3.0f); // Freeze for 3 seconds
+    }
+}
+
+void ApplyBurn(Collider target) {
+    EnemyHealth enemy = target.GetComponent<EnemyHealth>();
+    if (enemy != null) {
+        enemy.StartBurning(50f, 5.0f); // 50 damage over 5 seconds
+    }
+}
