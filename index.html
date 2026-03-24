@@ -1,160 +1,219 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRAINROT HUB | GOATED</title>
-    <style>
-        :root {
-            --neon-green: #00ff00;
-            --neon-pink: #ff00ff;
-            --dark-bg: #050505;
+void ApplyFreeze(Collider target) {
+    EnemyHealth enemy = target.GetComponent<EnemyHealth>();
+    if (enemy != null) {
+        enemy.Freeze(3.0f); // Freeze for 3 seconds
+    }
+}
+
+void ApplyBurn(Collider target) {
+    EnemyHealth enemy = target.GetComponent<EnemyHealth>();
+    if (enemy != null) {
+        enemy.StartBurning(50f, 5.0f); // 50 damage over 5 seconds
+    }
+}using UnityEngine;
+using System.Collections;
+
+public class EnemyHealth : MonoBehaviour {
+    public float maxHealth = 100f;
+    private float currentHealth;
+    
+    // Movement reference (replace with NavMeshAgent if using AI)
+    private float originalSpeed = 5f;
+    public float currentSpeed = 5f;
+
+    private bool isOnFire = false;
+
+    void Start() {
+        currentHealth = maxHealth;
+    }
+
+    // Called by the Ice Gun
+    public void Freeze(float duration) {
+        StopCoroutine(FreezeRoutine(0)); // Reset if already frozen
+        StartCoroutine(FreezeRoutine(duration));
+    }
+
+    IEnumerator FreezeRoutine(float duration) {
+        Debug.Log("Enemy Frozen!");
+        currentSpeed = 0; // Stop movement
+        // Optional: Change color to blue
+        GetComponent<Renderer>().material.color = Color.cyan;
+        
+        yield return new WaitForSeconds(duration);
+        
+        currentSpeed = originalSpeed;
+        GetComponent<Renderer>().material.color = Color.white;
+    }
+
+    // Called by the Fire Gun
+    public void StartBurning(float totalDamage, float duration) {
+        if (!isOnFire) {
+            StartCoroutine(BurnRoutine(totalDamage, duration));
         }
+    }
 
-        body {
-            background-color: var(--dark-bg);
-            color: white;
-            font-family: 'Arial Black', sans-serif;
-            margin: 0;
-            overflow-x: hidden;
-            text-align: center;
+    IEnumerator BurnRoutine(float totalDamage, float duration) {
+        isOnFire = true;
+        float damagePerTick = totalDamage / duration;
+        float elapsed = 0;
+
+        while (elapsed < duration) {
+            TakeDamage(damagePerTick * Time.deltaTime);
+            elapsed += Time.deltaTime;
+            // Optional: Spawn flame particles here
+            yield return null;
         }
+        isOnFire = false;
+    }
 
-        /* Animated Title */
-        .header {
-            padding: 40px;
-            background: linear-gradient(45deg, #1a1a1a, #000);
-            border-bottom: 5px solid var(--neon-green);
+    public void TakeDamage(float amount) {
+        currentHealth -= amount;
+        if (currentHealth <= 0) Die();
+    }
+
+    void Die() {
+        Debug.Log("Enemy Exploded!");
+        Destroy(gameObject);
+    }
+}using UnityEngine;
+using System.Collections;
+
+public class EnemyHealth : MonoBehaviour {
+    public float maxHealth = 100f;
+    private float currentHealth;
+    
+    // Movement reference (replace with NavMeshAgent if using AI)
+    private float originalSpeed = 5f;
+    public float currentSpeed = 5f;
+
+    private bool isOnFire = false;
+
+    void Start() {
+        currentHealth = maxHealth;
+    }
+
+    // Called by the Ice Gun
+    public void Freeze(float duration) {
+        StopCoroutine(FreezeRoutine(0)); // Reset if already frozen
+        StartCoroutine(FreezeRoutine(duration));
+    }
+
+    IEnumerator FreezeRoutine(float duration) {
+        Debug.Log("Enemy Frozen!");
+        currentSpeed = 0; // Stop movement
+        // Optional: Change color to blue
+        GetComponent<Renderer>().material.color = Color.cyan;
+        
+        yield return new WaitForSeconds(duration);
+        
+        currentSpeed = originalSpeed;
+        GetComponent<Renderer>().material.color = Color.white;
+    }
+
+    // Called by the Fire Gun
+    public void StartBurning(float totalDamage, float duration) {
+        if (!isOnFire) {
+            StartCoroutine(BurnRoutine(totalDamage, duration));
         }
+    }
 
-        h1 {
-            font-size: 4rem;
-            margin: 0;
-            animation: shake 0.5s infinite;
-            text-shadow: 4px 4px var(--neon-pink);
+    IEnumerator BurnRoutine(float totalDamage, float duration) {
+        isOnFire = true;
+        float damagePerTick = totalDamage / duration;
+        float elapsed = 0;
+
+        while (elapsed < duration) {
+            TakeDamage(damagePerTick * Time.deltaTime);
+            elapsed += Time.deltaTime;
+            // Optional: Spawn flame particles here
+            yield return null;
         }
+        isOnFire = false;
+    }
 
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            50% { transform: translate(-1px, 2px) rotate(1deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
+    public void TakeDamage(float amount) {
+        currentHealth -= amount;
+        if (currentHealth <= 0) Die();
+    }
+
+    void Die() {
+        Debug.Log("Enemy Exploded!");
+        Destroy(gameObject);
+    }using UnityEngine;
+using System.Collections;
+
+public class EnemyHealth : MonoBehaviour {
+    public float maxHealth = 100f;
+    private float currentHealth;
+    
+    // Movement reference (replace with NavMeshAgent if using AI)
+    private float originalSpeed = 5f;
+    public float currentSpeed = 5f;
+
+    private bool isOnFire = false;
+
+    void Start() {
+        currentHealth = maxHealth;
+    }
+
+    // Called by the Ice Gun
+    public void Freeze(float duration) {
+        StopCoroutine(FreezeRoutine(0)); // Reset if already frozen
+        StartCoroutine(FreezeRoutine(duration));
+    }
+
+    IEnumerator FreezeRoutine(float duration) {
+        Debug.Log("Enemy Frozen!");
+        currentSpeed = 0; // Stop movement
+        // Optional: Change color to blue
+        GetComponent<Renderer>().material.color = Color.cyan;
+        
+        yield return new WaitForSeconds(duration);
+        
+        currentSpeed = originalSpeed;
+        GetComponent<Renderer>().material.color = Color.white;
+    }
+
+    // Called by the Fire Gun
+    public void StartBurning(float totalDamage, float duration) {
+        if (!isOnFire) {
+            StartCoroutine(BurnRoutine(totalDamage, duration));
         }
+    }
 
-        /* Aura Counter */
-        #aura-display {
-            font-size: 2rem;
-            color: var(--neon-green);
-            margin: 20px 0;
-            cursor: pointer;
-            user-select: none;
+    IEnumerator BurnRoutine(float totalDamage, float duration) {
+        isOnFire = true;
+        float damagePerTick = totalDamage / duration;
+        float elapsed = 0;
+
+        while (elapsed < duration) {
+            TakeDamage(damagePerTick * Time.deltaTime);
+            elapsed += Time.deltaTime;
+            // Optional: Spawn flame particles here
+            yield return null;
         }
+        isOnFire = false;
+    }
 
-        /* Game Grid */
-        .container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 25px;
-            padding: 40px;
-        }
+    public void TakeDamage(float amount) {
+        currentHealth -= amount;
+        if (currentHealth <= 0) Die();
+    }
 
-        .card {
-            width: 300px;
-            background: #111;
-            border: 3px solid #333;
-            border-radius: 20px;
-            overflow: hidden;
-            transition: 0.3s;
-        }
+    void Die() {
+        Debug.Log("Enemy Exploded!");
+        Destroy(gameObject);
+    }
+}}void ApplyFreeze(Collider target) {
+    EnemyHealth enemy = target.GetComponent<EnemyHealth>();
+    if (enemy != null) {
+        enemy.Freeze(3.0f); // Freeze for 3 seconds
+    }
+}
 
-        .card:hover {
-            transform: translateY(-10px) scale(1.05);
-            border-color: var(--neon-pink);
-            box-shadow: 0 0 20px var(--neon-pink);
-        }
-
-        .card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .card-content { padding: 20px; }
-
-        .play-btn {
-            display: block;
-            background: var(--neon-green);
-            color: black;
-            padding: 15px;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-
-        /* Soundboard */
-        .soundboard {
-            background: #111;
-            padding: 30px;
-            border-top: 5px solid var(--neon-pink);
-        }
-
-        .sfx-btn {
-            background: #333;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .sfx-btn:active { background: var(--neon-pink); }
-    </style>
-</head>
-<body>
-
-    <div class="header">
-        <h1>BRAINROT HUB</h1>
-        <div id="aura-display" onclick="addAura()">AURA: <span id="aura-count">1000</span></div>
-    </div>
-
-    <div class="container">
-        <div class="card">
-            <img src="https://tr.rbxcdn.com/180DAY-6729013c77e68407481e13886566810a/420/420/Image/Webp/noFilter" alt="Rivals">
-            <div class="card-content">
-                <h2>RIVALS</h2>
-                <p>Top tier 1v1 combat. Don't be a casual.</p>
-                <a href="https://www.roblox.com/games/17621351119/RIVALS" target="_blank" class="play-btn">LAUNCH GAME</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="https://tr.rbxcdn.com/180DAY-46c5923186259f9c09c25f46487e4922/420/420/Image/Webp/noFilter" alt="Tsunami">
-            <div class="card-content">
-                <h2>TSUNAMI</h2>
-                <p>Run fast. The water is actually brainrot.</p>
-                <a href="https://www.roblox.com/games/14582156545/Escape-Tsunami" target="_blank" class="play-btn">LAUNCH GAME</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="https://tr.rbxcdn.com/180DAY-82998a46b5a7590d0b0b8c66e749e3c4/420/420/Image/Webp/noFilter" alt="Knockout">
-            <div class="card-content">
-                <h2>KNOCKOUT</h2>
-                <p>Physics-based destruction. Peak gameplay.</p>
-                <a href="https://www.roblox.com/games/17336043187/KNOCKOUT" target="_blank" class="play-btn">LAUNCH GAME</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="soundboard">
-        <h3>MEME SOUNDBOARD</h3>
-        <button class="sfx-btn" onclick="alert('📢 BRRR SKIBIDI')">SKIBIDI</button>
-        <button class="sfx-btn" onclick="alert('💥 BOOM')">VINE THUD</button>
-        <button class="sfx-btn" onclick="alert('📉 -1000 AURA')">L RIZZ</button>
-    </div>
-
-    <script>
+void ApplyBurn(Collider target) {
+    EnemyHealth enemy = target.GetComponent<EnemyHealth>();
+    if (enemy != null) {
+        enemy.StartBurning(50f, 5.0f); // 50 damage over 5 seconds
+    }
+}
